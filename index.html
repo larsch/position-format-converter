@@ -19,26 +19,33 @@
     <script src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBwyk4jkvnctp1kcsDSSUG29IN7SGU6mc8"></script>
     <script src="js/pos.js"></script>
-    <form>
+    <form class="form-horizontal">
       <div class="form-group">
-        <label for="signedDecimal">Signed Degrees (Latitude, Longitude)</label>
-        <input type="text" class="form-control position" id="signedDecimal">
+        <label for="signedDecimal" class="col-sm-3 control-label">Signed Degrees (Latitude, Longitude)</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control position" id="signedDecimal">
+        </div>
       </div>
       <div class="form-group">
-        <label for="degreesDecimalMinutes">Degrees, Decimal Minutes</label>
-        <input type="text" class="form-control position" id="degreesDecimalMinutes">
+        <label for="degreesDecimalMinutes" class="col-sm-3 control-label">Degrees, Decimal Minutes</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control position" id="degreesDecimalMinutes">
+        </div>
       </div>
       <div class="form-group">
-        <label for="degreesMinutesSeconds">Degrees, Minutes, Seconds</label>
-        <input type="text" class="form-control position" id="degreesMinutesSeconds">
+        <label for="degreesMinutesSeconds" class="col-sm-3 control-label">Degrees, Minutes, Seconds</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control position" id="degreesMinutesSeconds">
+        </div>
       </div>
       <div class="form-group">
-        <label for="gpgga">NMEA - GPGGA</label>
-        <input type="text" class="form-control position" id="gpgga">
+        <label for="gpgga" class="col-sm-3 control-label">NMEA - GPGGA</label>
+        <div class="col-sm-9">
+          <input type="text" class="form-control position" id="gpgga">
+        </div>
       </div>
     </form>
     <div id="map-canvas" style="width: 100%; height: 600px; border-radius: 4px;">
-      Hello?
     </div>
   </body>
 </html>
