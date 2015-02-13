@@ -10,13 +10,13 @@ $(function(){
     function signIndex(num) {
 	return num >= 0.0 ? 0 : 1;
     }
-    function floorFloat(num, trailing) {
+    function roundFloat(num, trailing) {
 	var f = Math.pow(10.0, trailing);
-	return Math.floor(num * f) / f;
+	return Math.round(num * f) / f;
     }
     function degMin(num, trailing) {
 	var deg = Math.floor(num);
-	var six = floorFloat(60.0 * (num % 1.0), trailing);
+	var six = roundFloat(60.0 * (num % 1.0), trailing);
 	if (six >= 60.0)
 	    return [ deg + 1.0, 0.0 ];
 	else
@@ -25,7 +25,7 @@ $(function(){
     function degMinSec(num, trailing) {
 	var deg = Math.floor(num);
 	var min = Math.floor(60.0 * (num % 1.0));
-	var sec = floorFloat(num - deg - min * 60.0, trailing);
+	var sec = roundFloat(num - deg - min / 60.0, trailing);
 	if (sec >= 60.0) { sec = 0.0; min += 1.0; }
 	if (min >= 60.0) { min = 0.0; deg += 1.0; }
 	return [deg, min, sec];
@@ -106,8 +106,8 @@ $(function(){
 	    format: function(pos) {
 		var sense1 = ["N","S"][signIndex(pos[0])];
 		var sense2 = ["E","W"][signIndex(pos[1])];
-		var degMin1 = degMin(Math.abs(pos[0]));
-		var degMin2 = degMin(Math.abs(pos[1]));
+		var degMin1 = degMin(Math.abs(pos[0]), 4);
+		var degMin2 = degMin(Math.abs(pos[1]), 4);
 		return "$GPGGA,000000.000," + zeroFill(degMin1[0], 2) + zeroFillFloat(degMin1[1], 2, 4) + "," + sense1 + "," + zeroFill(degMin2[0], 3) + zeroFillFloat(degMin2[1], 2, 4) + "," + sense2 + ",...";
 	    }
 	}
@@ -134,10 +134,8 @@ $(function(){
 	var thisFormat = elem[0].id;
 	if (elem.val() == elem[0].old_val) return;
 	elem[0].old_val = elem.val();
-	console.log("update");
 	if (pos = parsePos(elem.val(), thisFormat)) {
 	    elem.parent().removeClass("has-error");
-	    console.log(pos);
 	    setPosition(pos, thisFormat);
 	    if (map) map.setCenter({lat: pos[0], lng: pos[1]});
 	    if (marker) marker.setPosition({lat: pos[0], lng: pos[1]});
