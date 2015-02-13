@@ -1,0 +1,10 @@
+img.forkme {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 0;
+    opacity: 0.25;
+}
+img.forkme:hover {
+    opacity: 1.0;
+}
