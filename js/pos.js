@@ -83,7 +83,7 @@ $(function(){
 	},
 	gpgga: {
 	    parse: function(text) {
-		var regexp = new RegExp("^\\$GPGGA,\\d{6}\\.\\d+,(\\d{2})(\\d\\d\\.\\d+),([NS]),(\\d{3})(\\d\\d\\.\\d+),([EW]),.*");
+		var regexp = new RegExp("^\\$GPGGA,\\d{6}(?:\\.\\d+)?,(\\d{2})(\\d\\d\\.\\d+),([NS]),(\\d{3})(\\d\\d\\.\\d+),([EW]),.*");
 		if (m = text.match(regexp)) {
 		    return [ signFactor(m[3]) * (parseInt(m[1]) + parseFloat(m[2]) / 60.0),
 			     signFactor(m[6]) * (parseInt(m[4]) + parseFloat(m[5]) / 60.0) ];
