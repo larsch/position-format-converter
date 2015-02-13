@@ -58,7 +58,7 @@ $(function(){
 		    return null;
 	    },
 	    format: function(pos) {
-		return formatFloat(pos[0], 5) + ", " + formatFloat(pos[1], 5);
+		return formatFloat(pos[0], 7) + ", " + formatFloat(pos[1], 7);
 	    }
 	},
 	degreesDecimalMinutes: {
