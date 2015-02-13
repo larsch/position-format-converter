@@ -10,8 +10,25 @@ $(function(){
     function signIndex(num) {
 	return num >= 0.0 ? 0 : 1;
     }
-    function sixty(num) {
-	return [Math.floor(num), 60.0 * (num % 1.0)];
+    function floorFloat(num, trailing) {
+	var f = Math.pow(10.0, trailing);
+	return Math.floor(num * f) / f;
+    }
+    function degMin(num, trailing) {
+	var deg = Math.floor(num);
+	var six = floorFloat(60.0 * (num % 1.0), trailing);
+	if (six >= 60.0)
+	    return [ deg + 1.0, 0.0 ];
+	else
+	    return [ deg, six ];
+    }
+    function degMinSec(num, trailing) {
+	var deg = Math.floor(num);
+	var min = Math.floor(60.0 * (num % 1.0));
+	var sec = floorFloat(num - deg - min * 60.0, trailing);
+	if (sec >= 60.0) { sec = 0.0; min += 1.0; }
+	if (min >= 60.0) { min = 0.0; deg += 1.0; }
+	return [deg, min, sec];
     }
     function signFactor(letter) {
 	return (letter == "N" || letter == "E") ? 1.0 : -1.0;
@@ -24,14 +41,13 @@ $(function(){
     }
     function formatFloat(num, trailing) {
 	var factor = Math.pow(10.0, trailing);
-	var interm = Math.round(num * factor) / factor;
+	var interm = Math.floor(num * factor) / factor;
 	var res = interm.toString();
 	return (res.length == 1) ? res + ".0" : res;
     }
     function zeroFillFloat(num, leading, trailing) {
 	return zeroFill(Math.floor(num), leading) + formatFloat(num % 1.0, trailing).substr(1);
     }
-
     var formats = {
 	signedDecimal: {
 	    parse: function(text) {
@@ -57,8 +73,8 @@ $(function(){
 	    format : function(pos) {
 		var sense1 = ["N","S"][signIndex(pos[0])];
 		var sense2 = ["E","W"][signIndex(pos[1])];
-		var degMin1 = sixty(Math.abs(pos[0]));
-		var degMin2 = sixty(Math.abs(pos[1]));
+		var degMin1 = degMin(Math.abs(pos[0]), 5);
+		var degMin2 = degMin(Math.abs(pos[1]), 5);
 		return "" + degMin1[0] + "\u00B0" + formatFloat(degMin1[1], 5) + "'" + sense1 + " " + degMin2[0] + "\u00B0" + formatFloat(degMin2[1], 5) + "'" + sense2;
 	    }
 	},
@@ -73,12 +89,10 @@ $(function(){
 	    format: function(pos) {
 		var sense1 = ["N","S"][signIndex(pos[0])];
 		var sense2 = ["E","W"][signIndex(pos[1])];
-		var degMin1 = sixty(Math.abs(pos[0]));
-		var minSec1 = sixty(degMin1[1]);
-		var degMin2 = sixty(Math.abs(pos[1]));
-		var minSec2 = sixty(degMin2[1]);
-		return "" + degMin1[0] + "\u00B0" + minSec1[0] + "'" + minSec1[1].toFixed(3) + '"' + sense1 + " " +
-		    degMin2[0] + "\u00B0" + minSec2[0] + "'" + minSec2[1].toFixed(3) + '"' + sense2;
+		var dms1 = degMinSec(Math.abs(pos[0]), 3);
+		var dms2 = degMinSec(Math.abs(pos[1]), 3);
+		return "" + dms1[0] + "\u00B0" + dms1[1] + "'" + dms1[2].toFixed(3) + '"' + sense1 + " " +
+		    dms2[0] + "\u00B0" + dms2[1] + "'" + dms2[2].toFixed(3) + '"' + sense2;
 	    }
 	},
 	gpgga: {
@@ -92,8 +106,8 @@ $(function(){
 	    format: function(pos) {
 		var sense1 = ["N","S"][signIndex(pos[0])];
 		var sense2 = ["E","W"][signIndex(pos[1])];
-		var degMin1 = sixty(Math.abs(pos[0]));
-		var degMin2 = sixty(Math.abs(pos[1]));
+		var degMin1 = degMin(Math.abs(pos[0]));
+		var degMin2 = degMin(Math.abs(pos[1]));
 		return "$GPGGA,000000.000," + zeroFill(degMin1[0], 2) + zeroFillFloat(degMin1[1], 2, 4) + "," + sense1 + "," + zeroFill(degMin2[0], 3) + zeroFillFloat(degMin2[1], 2, 4) + "," + sense2 + ",...";
 	    }
 	}
@@ -101,7 +115,7 @@ $(function(){
 
     function parsePos(text, format) {
 	if (pos = formats[format].parse(text.trim()))
-	    if (pos[0] >= -90.0 && pos[0] <= 90.0 && pos[0] >= -180.0 && pos[1] <= 180.0)
+	    if (pos[0] >= -90.0 && pos[0] <= 90.0 && pos[1] >= -180.0 && pos[1] <= 180.0)
 		return pos;
 	return null;
     }
@@ -123,6 +137,7 @@ $(function(){
 	console.log("update");
 	if (pos = parsePos(elem.val(), thisFormat)) {
 	    elem.parent().removeClass("has-error");
+	    console.log(pos);
 	    setPosition(pos, thisFormat);
 	    if (map) map.setCenter({lat: pos[0], lng: pos[1]});
 	    if (marker) marker.setPosition({lat: pos[0], lng: pos[1]});
