@@ -139,4 +139,13 @@ $(function(){
 	setPosition([e.latLng.lat(), e.latLng.lng()], "map");
 	marker.setPosition(e.latLng);
     });
+
+    function resizeMap() {
+	var map = $("#map-canvas");
+	var offset = map.offset();
+	var remaining = parseInt($(window).height() - offset.top - 20);
+	map.height(Math.max(remaining, 128));
+    };
+    $(window).resize(resizeMap);
+    resizeMap();
 });
