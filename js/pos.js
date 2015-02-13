@@ -43,7 +43,7 @@ $(function(){
 	var factor = Math.pow(10.0, trailing);
 	var interm = Math.floor(num * factor) / factor;
 	var res = interm.toString();
-	return (res.length == 1) ? res + ".0" : res;
+	return (res.indexOf(".") == -1) ? res + ".0" : res;
     }
     function zeroFillFloat(num, leading, trailing) {
 	return zeroFill(Math.floor(num), leading) + formatFloat(num % 1.0, trailing).substr(1);
