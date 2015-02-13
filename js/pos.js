@@ -108,12 +108,19 @@ $(function(){
 
     function setPosition(position, thisFormat) {
 	for (otherFormat in formats)
-	    if (otherFormat != thisFormat)
-		$("#" + otherFormat).val(formats[otherFormat].format(position));
+	    if (otherFormat != thisFormat) {
+		var val = formats[otherFormat].format(position);
+		var elem = $("#" + otherFormat);
+		elem.val(val);
+		elem[0].old_val = val;
+	    }
 	$("input").removeClass("has-error");
     }
     function update(elem) {
 	var thisFormat = elem[0].id;
+	if (elem.val() == elem[0].old_val) return;
+	elem[0].old_val = elem.val();
+	console.log("update");
 	if (pos = parsePos(elem.val(), thisFormat)) {
 	    elem.parent().removeClass("has-error");
 	    setPosition(pos, thisFormat);
