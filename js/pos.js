@@ -77,7 +77,7 @@ $(function(){
 		var sense2 = ["E","W"][signIndex(pos[1])];
 		var degMin1 = degMin(Math.abs(pos[0]), 5);
 		var degMin2 = degMin(Math.abs(pos[1]), 5);
-		return "" + degMin1[0] + "\u00B0" + formatFloat(degMin1[1], 5) + "'" + sense1 + " " + degMin2[0] + "\u00B0" + formatFloat(degMin2[1], 5) + "'" + sense2;
+		return "" + degMin1[0] + "\u00B0 " + formatFloat(degMin1[1], 5) + "' " + sense1 + " " + degMin2[0] + "\u00B0 " + formatFloat(degMin2[1], 5) + "' " + sense2;
 	    }
 	},
 	degreesMinutesSeconds: {
@@ -94,8 +94,8 @@ $(function(){
 		var sense2 = ["E","W"][signIndex(pos[1])];
 		var dms1 = degMinSec(Math.abs(pos[0]), 3);
 		var dms2 = degMinSec(Math.abs(pos[1]), 3);
-		return "" + dms1[0] + "\u00B0" + dms1[1] + "'" + dms1[2].toFixed(3) + '"' + sense1 + " " +
-		    dms2[0] + "\u00B0" + dms2[1] + "'" + dms2[2].toFixed(3) + '"' + sense2;
+		return "" + dms1[0] + "\u00B0 " + dms1[1] + "' " + dms1[2].toFixed(3) + '" ' + sense1 + " " +
+		    dms2[0] + "\u00B0 " + dms2[1] + "' " + dms2[2].toFixed(3) + '" ' + sense2;
 	    }
 	},
 	gpgga: {
