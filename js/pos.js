@@ -2,7 +2,7 @@ $(function(){
     var marker;
     var initPos = [ 17.39258, 18.10547 ];
     var map;
-    var mapCanvas = $("#map-canvas")[0];
+    var mapCanvas = $("#map-canvas");
     var separator = "\\s*,?\\s*";
     var decimal = "(?:(?:\\d+(?:\\.\\d*)?)|(?:\\.\\d+))";
     var signedDecimal = "[+-]?" + decimal;
@@ -152,7 +152,7 @@ $(function(){
     }
     $(".position").on('change keyup paste', function() { update($(this)); } );
     var mapOptions = { zoom: 4, center: { lat: initPos[0], lng: initPos[1] } };
-    map = new google.maps.Map(mapCanvas, mapOptions);
+    map = new google.maps.Map(mapCanvas[0], mapOptions);
     marker = new google.maps.Marker({position: { lat: initPos[0], lng: initPos[1] }, map: map });
     setPosition(initPos, "map")
     google.maps.event.addListener(map, 'click', function(e){
@@ -163,7 +163,7 @@ $(function(){
     function resizeMap() {
 	var offset = mapCanvas.offset();
 	var remaining = parseInt($(window).height() - offset.top - 20);
-	map.height(Math.max(remaining, 128));
+	mapCanvas.height(Math.max(remaining, 128));
     };
     $(window).resize(resizeMap);
     resizeMap();
