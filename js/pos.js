@@ -1,8 +1,8 @@
-var map;
-var marker;
-var initPos = [ 17.39258, 18.10547 ];
-
 $(function(){
+    var marker;
+    var initPos = [ 17.39258, 18.10547 ];
+    var map;
+    var mapCanvas = $("#map-canvas")[0];
     var separator = "\\s*,?\\s*";
     var decimal = "(?:(?:\\d+(?:\\.\\d*)?)|(?:\\.\\d+))";
     var signedDecimal = "[+-]?" + decimal;
@@ -52,9 +52,10 @@ $(function(){
 	signedDecimal: {
 	    parse: function(text) {
 		var regexp = new RegExp("^(" + signedDecimal + ")" + separator + "(" + signedDecimal + ")$");
+		var m;
 		if (m = text.match(regexp)) {
 		    return [parseFloat(m[1]), parseFloat(m[2])];
-		    } else
+		} else
 		    return null;
 	    },
 	    format: function(pos) {
@@ -65,6 +66,7 @@ $(function(){
 	    parse: function(text) {
 		var degDecMin = "(\\d+)\\s*\u00B0\\s*("+decimal+")"
 		var regexp = new RegExp("^" + degDecMin + "\\s*'?\\s*([NS])" + separator + degDecMin + "\\s*'?\\s*([EW])$", "i");
+		var m;
 		if (m = text.match(regexp)) {
 		    return [ signFactor(m[3]) * (parseInt(m[1]) + parseFloat(m[2]) / 60.0),
 			     signFactor(m[6]) * (parseInt(m[4]) + parseFloat(m[5]) / 60.0) ];
@@ -82,6 +84,7 @@ $(function(){
 	    parse: function(text) {
 		var degMinSec = "(\\d+)\\s*\u00B0\\s*(\\d+)\\s*'\\s*(" + decimal + ")\\s*\"";
 		var regexp = new RegExp("^" + degMinSec + "\\s*([NS])" + separator + degMinSec + "\\s*([EW])$", "i");
+		var m;
 		if (m = text.match(regexp))
 		    return [ signFactor(m[4]) * (parseInt(m[1]) + (parseInt(m[2]) + parseFloat(m[3]) / 60.0) / 60.0),
 			     signFactor(m[8]) * (parseInt(m[5]) + (parseInt(m[6]) + parseFloat(m[7]) / 60.0) / 60.0) ];
@@ -98,6 +101,7 @@ $(function(){
 	gpgga: {
 	    parse: function(text) {
 		var regexp = new RegExp("^\\$GPGGA,\\d{6}(?:\\.\\d+)?,(\\d{2})(\\d\\d\\.\\d+),([NS]),(\\d{3})(\\d\\d\\.\\d+),([EW]),.*");
+		var m;
 		if (m = text.match(regexp)) {
 		    return [ signFactor(m[3]) * (parseInt(m[1]) + parseFloat(m[2]) / 60.0),
 			     signFactor(m[6]) * (parseInt(m[4]) + parseFloat(m[5]) / 60.0) ];
@@ -114,6 +118,7 @@ $(function(){
     };
 
     function parsePos(text, format) {
+	var pos;
 	if (pos = formats[format].parse(text.trim()))
 	    if (pos[0] >= -90.0 && pos[0] <= 90.0 && pos[1] >= -180.0 && pos[1] <= 180.0)
 		return pos;
@@ -121,6 +126,7 @@ $(function(){
     }
 
     function setPosition(position, thisFormat) {
+	var otherFormat;
 	for (otherFormat in formats)
 	    if (otherFormat != thisFormat) {
 		var val = formats[otherFormat].format(position);
@@ -132,6 +138,7 @@ $(function(){
     }
     function update(elem) {
 	var thisFormat = elem[0].id;
+	var pos;
 	if (elem.val() == elem[0].old_val) return;
 	elem[0].old_val = elem.val();
 	if (pos = parsePos(elem.val(), thisFormat)) {
@@ -145,7 +152,7 @@ $(function(){
     }
     $(".position").on('change keyup paste', function() { update($(this)); } );
     var mapOptions = { zoom: 4, center: { lat: initPos[0], lng: initPos[1] } };
-    map = new google.maps.Map(document.getElementById("map-canvas"), mapOptions);
+    map = new google.maps.Map(mapCanvas, mapOptions);
     marker = new google.maps.Marker({position: { lat: initPos[0], lng: initPos[1] }, map: map });
     setPosition(initPos, "map")
     google.maps.event.addListener(map, 'click', function(e){
@@ -154,8 +161,7 @@ $(function(){
     });
 
     function resizeMap() {
-	var map = $("#map-canvas");
-	var offset = map.offset();
+	var offset = mapCanvas.offset();
 	var remaining = parseInt($(window).height() - offset.top - 20);
 	map.height(Math.max(remaining, 128));
     };
